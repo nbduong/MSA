@@ -48,8 +48,6 @@ public class Player extends AppCompatActivity {
 
     private static final String TAG = "Player";
     private boolean isFullScreen = false;
-    private int currentPosition = 0;
-    private Toolbar toolbar;
     private FrameLayout frameLayout;
     private VideoView videoPlayer;
     private ImageView fullScreenOp;
@@ -60,7 +58,6 @@ public class Player extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private RatingBar ratingBar;
     float rateValue; String temp;
-    Cursor cursor;
     ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +82,6 @@ public class Player extends AppCompatActivity {
         ratingBar=findViewById(R.id.ratingBar);
         dbHelper = new DatabaseHelper(this);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         //lấy dữ liệu về phim
@@ -143,13 +139,6 @@ public class Player extends AppCompatActivity {
         };
         orientationEventListener.enable();
 
-
-
-
-
-
-
-
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -193,12 +182,6 @@ public class Player extends AppCompatActivity {
         });
         String ratingsText = dbHelper.getAllRatingsAsString();
         showRating.setText(ratingsText);
-
-
-
-
-
-
     }
 
     // xử lý nút phóng to sẽ di chuyển sau khi ấn
@@ -273,6 +256,4 @@ public class Player extends AppCompatActivity {
         editor.putInt(v.getTitle().replaceAll("\\s+", ""), videoPlayer.getCurrentPosition());
         editor.apply();
     }
-
-
 }
