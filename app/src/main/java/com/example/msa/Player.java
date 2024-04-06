@@ -56,8 +56,10 @@ public class Player extends AppCompatActivity {
     private EditText review;
     private Button submit;
     private DatabaseHelper dbHelper;
+    FirebaseAuthService service;
+
     private RatingBar ratingBar;
-    float rateValue; String temp;
+    float rateValue; String temp,test;
     ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +83,8 @@ public class Player extends AppCompatActivity {
         submit=findViewById(R.id.submitBtn);
         ratingBar=findViewById(R.id.ratingBar);
         dbHelper = new DatabaseHelper(this);
-
-
+        service = new FirebaseAuthService();
+        String name=service.getmAuth().getCurrentUser().getDisplayName();
 
         //lấy dữ liệu về phim
         Intent i = getIntent();
@@ -158,30 +160,36 @@ public class Player extends AppCompatActivity {
                 }
             }
         });
+        String a=v.getTitle();
+
         submit.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                test=review.getText().toString();
                 temp=rateCount.getText().toString();
                 showRating.setText("đánh giá của bạn:\n"+temp+"\n"+review.getText());
 
                 rateValue=ratingBar.getRating();
-                String name = "Your Name"; // Thay bằng tên người dùng thực tế
-                boolean result = dbHelper.addRating(name, rateValue, review.getText().toString());
+                String name=service.getmAuth().getCurrentUser().getEmail();
+                System.out.println(name);
+                boolean result = dbHelper.addRating(name, rateValue, test,a);
+                //Toast.makeText(Player.this, test, Toast.LENGTH_SHORT).show();
                 if (result) {
                     Toast.makeText(Player.this, "Đã gửi đánh giá", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(Player.this, "Lỗi khi gửi đánh giá", Toast.LENGTH_SHORT).show();
                 }
-                String ratingsText = dbHelper.getAllRatingsAsString();
-                showRating.setText(ratingsText);
+
                 review.setText("");
                 ratingBar.setRating(0);
                 rateCount.setText("");
             }
 
         });
-        String ratingsText = dbHelper.getAllRatingsAsString();
+        String ratingsText = dbHelper.getAllRatingsAsString(a);
         showRating.setText(ratingsText);
+
     }
 
     // xử lý nút phóng to sẽ di chuyển sau khi ấn
