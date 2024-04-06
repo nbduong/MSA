@@ -2,6 +2,10 @@ package com.example.msa;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "TAG";
     RecyclerView videoList;
     VideoAdapter adapter;
+    RecyclerView recyclerView;
+    EditText editTextComment;
+    Button buttonSubmit;
 
     List<Video> all_videos;
 
@@ -95,5 +102,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         requestQueue.add(objectRequest);
+
+
+
+
+
     }
+
 }
