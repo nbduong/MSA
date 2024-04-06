@@ -1,10 +1,15 @@
 package com.example.msa;
 
+
+import android.annotation.SuppressLint;
+
 import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,11 +19,15 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -45,6 +54,13 @@ public class Player extends AppCompatActivity {
     private VideoView videoPlayer;
     private ImageView fullScreenOp;
 
+    private TextView rateCount,showRating;
+    private EditText review;
+    private Button submit;
+    private DatabaseHelper dbHelper;
+    private RatingBar ratingBar;
+    float rateValue; String temp;
+    Cursor cursor;
     ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +77,16 @@ public class Player extends AppCompatActivity {
         fullScreenOp = findViewById(R.id.fullScreenOp);
         progressBar = findViewById(R.id.videoProgressBar);
 
-        //gọi thanh điều hướng
+
+        rateCount=findViewById(R.id.rateCount);
+        showRating=findViewById(R.id.showRating);
+        review=findViewById(R.id.review);
+        submit=findViewById(R.id.submitBtn);
+        ratingBar=findViewById(R.id.ratingBar);
+        dbHelper = new DatabaseHelper(this);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //lấy dữ liệu về phim
         Intent i = getIntent();
@@ -117,6 +142,63 @@ public class Player extends AppCompatActivity {
             }
         };
         orientationEventListener.enable();
+
+
+
+
+
+
+
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                rateValue = ratingBar.getRating();
+
+                // Corrected if-else conditions for clarity and accuracy
+                if (rateValue <= 1 && rateValue>0) {
+                    rateCount.setText("Bad " + rateValue + "/5");
+                } else if (rateValue <= 2 && rateValue>1) {
+                    rateCount.setText("Ok " + rateValue + "/5");
+                } else if (rateValue <= 3 && rateValue>2) {
+                    rateCount.setText("Good " + rateValue + "/5");
+                } else if (rateValue <= 4 && rateValue>3) {
+                    rateCount.setText("Very " + rateValue + "/5");
+                } else { // rateValue is 5
+                    rateCount.setText("Best " + rateValue + "/5");
+                }
+            }
+        });
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                temp=rateCount.getText().toString();
+                showRating.setText("đánh giá của bạn:\n"+temp+"\n"+review.getText());
+
+                rateValue=ratingBar.getRating();
+                String name = "Your Name"; // Thay bằng tên người dùng thực tế
+                boolean result = dbHelper.addRating(name, rateValue, review.getText().toString());
+                if (result) {
+                    Toast.makeText(Player.this, "Đã gửi đánh giá", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Player.this, "Lỗi khi gửi đánh giá", Toast.LENGTH_SHORT).show();
+                }
+                String ratingsText = dbHelper.getAllRatingsAsString();
+                showRating.setText(ratingsText);
+                review.setText("");
+                ratingBar.setRating(0);
+                rateCount.setText("");
+            }
+
+        });
+        String ratingsText = dbHelper.getAllRatingsAsString();
+        showRating.setText(ratingsText);
+
+
+
+
+
+
     }
 
     // xử lý nút phóng to sẽ di chuyển sau khi ấn
@@ -145,6 +227,7 @@ public class Player extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
     // sự kiện xem tiếp từ 1 vị trí đã dừng trước đó

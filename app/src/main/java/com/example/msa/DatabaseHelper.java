@@ -8,13 +8,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "video.db";
+
+    private static final String DATABASE_NAME = "ratings.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_NAME = "video_position";
+
+    private static final String TABLE_NAME = "ratings";
     private static final String COLUMN_ID = "id";
-    private static final String COLUMN_USER_ID = "iduser";
-    private static final String COLUMN_MOVIE_ID = "movie_id";
-    private static final String COLUMN_POSITION = "position";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_RATING = "rating";
+    public static final String COLUMN_REVIEW = "review";
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -22,12 +25,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_NAME + " (" +
+
+        String createTableQuery = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_USER_ID + " INTEGER, " +
-                COLUMN_MOVIE_ID + " INTEGER, " +
-                COLUMN_POSITION + " INTEGER)";
-        db.execSQL(query);
+                COLUMN_NAME + " TEXT, " +
+                COLUMN_RATING + " REAL, " +
+                COLUMN_REVIEW + " TEXT)";
+        db.execSQL(createTableQuery);
+
+        addSampleData(db, "Alice", 4.5f, "Great movie!");
+        addSampleData(db, "Bob", 3.0f, "Average movie");
+        addSampleData(db, "Charlie", 5.0f, "Excellent!");
+        addSampleData(db, "David", 2.5f, "Not bad");
+        addSampleData(db, "Eve", 1.0f, "Terrible");
+    }
+    private void addSampleData(SQLiteDatabase db, String name, float rating, String review) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME, name);
+        contentValues.put(COLUMN_RATING, rating);
+        contentValues.put(COLUMN_REVIEW, review);
+        db.insert(TABLE_NAME, null, contentValues);
     }
 
     @Override
@@ -35,31 +52,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-    public void saveVideoPosition(int userId, int movieId, int position) {
+
+
+    public boolean addRating(String name, float rating, String review) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userId);
-        values.put(COLUMN_MOVIE_ID, movieId);
-        values.put(COLUMN_POSITION, position);
-        db.insert(TABLE_NAME, null, values);
-        db.close();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME, name);
+        contentValues.put(COLUMN_RATING, rating);
+        contentValues.put(COLUMN_REVIEW, review);
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        return result != -1;
     }
 
-    @SuppressLint("Range")
-    public int getVideoPosition(int userId, int movieId) {
+    public Cursor getAllRatings() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
+
+    public String getAllRatingsAsString() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT " + COLUMN_POSITION + " FROM " + TABLE_NAME +
-                " WHERE " + COLUMN_USER_ID + " = " + userId +
-                " AND " + COLUMN_MOVIE_ID + " = " + movieId;
-        Cursor cursor = db.rawQuery(query, null);
-        int position = -1;
-        if (cursor.moveToFirst()) {
-            position = cursor.getInt(cursor.getColumnIndex(COLUMN_POSITION));
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        StringBuilder ratingText = new StringBuilder();
+        while (cursor.moveToNext()) {
+            @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+            @SuppressLint("Range") float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
+            @SuppressLint("Range") String review = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW));
+            ratingText.append("Tên người dùng: ").append(name).append("\n");
+            ratingText.append("Đánh giá: ").append(rating).append("\n");
+            ratingText.append("Nhận xét: ").append(review).append("\n\n");
         }
         cursor.close();
-        db.close();
-        return position;
+        return ratingText.toString();
     }
-
-
 }
