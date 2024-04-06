@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+
     private static final String DATABASE_NAME = "ratings.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -17,12 +18,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_RATING = "rating";
     public static final String COLUMN_REVIEW = "review";
 
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String createTableQuery = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " TEXT, " +
@@ -43,11 +46,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_REVIEW, review);
         db.insert(TABLE_NAME, null, contentValues);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
 
     public boolean addRating(String name, float rating, String review) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -79,5 +84,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return ratingText.toString();
     }
-
 }

@@ -43,7 +43,6 @@ public class FirebaseAuthService {
                         setStatus(1);
                         Log.d(TAG, "Reset password link has been sent to your Email.");
                         Toast.makeText(view, "Reset password link has been sent to your Email.", Toast.LENGTH_SHORT).show();
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -54,6 +53,4 @@ public class FirebaseAuthService {
                     }
                 });
     }
-
-
 }
