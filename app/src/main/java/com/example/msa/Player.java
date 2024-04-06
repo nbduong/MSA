@@ -1,6 +1,8 @@
 package com.example.msa;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -19,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -49,31 +52,34 @@ public class Player extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_player);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //thanh điều hướng
+
+
 
         frameLayout = findViewById(R.id.frameLayout);
         videoPlayer = findViewById(R.id.videoView);
         fullScreenOp = findViewById(R.id.fullScreenOp);
         progressBar = findViewById(R.id.videoProgressBar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //gọi thanh điều hướng
 
+        //lấy dữ liệu về phim
         Intent i = getIntent();
         Bundle data = i.getExtras();
         Video v = (Video) data.getSerializable("videoData");
-        getSupportActionBar().setTitle(v.getTitle());
+
 
         TextView title = findViewById(R.id.videoTitle);
         TextView desc = findViewById(R.id.videoDesc);
-
         title.setText(v.getTitle());
         desc.setText(v.getDescription());
+
+
         Uri videoUrl = Uri.parse("https" + v.getVideoUrl().substring(4));
         videoPlayer.setVideoURI(videoUrl);
         MediaController mc = new MediaController(this);
         videoPlayer.setMediaController(mc);
-
+        showResumeDialog();
         videoPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -82,23 +88,22 @@ public class Player extends AppCompatActivity {
             }
         });
 
+
+        // xử lý full màn hình
         fullScreenOp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isFullScreen) {
-                    toolbar.setVisibility(View.INVISIBLE);
-                    currentPosition = videoPlayer.getCurrentPosition();
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     isFullScreen = true;
                 } else {
-                    toolbar.setVisibility(View.VISIBLE);
-                    videoPlayer.seekTo(currentPosition);
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                     isFullScreen = false;
                 }
             }
         });
 
+        // xử lý các view để khớp với màn hình sau khi xoay
         OrientationEventListener orientationEventListener = new OrientationEventListener(this) {
             @Override
             public void onOrientationChanged(int orientation) {
@@ -114,12 +119,12 @@ public class Player extends AppCompatActivity {
         orientationEventListener.enable();
     }
 
+    // xử lý nút phóng to sẽ di chuyển sau khi ấn
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         updateFullScreenButtonMargin();
     }
-
     private void updateFullScreenButtonMargin() {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) fullScreenOp.getLayoutParams();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -130,6 +135,8 @@ public class Player extends AppCompatActivity {
         fullScreenOp.setLayoutParams(params);
     }
 
+
+    // sự kiện quay về trang home
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -138,4 +145,51 @@ public class Player extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    // sự kiện xem tiếp từ 1 vị trí đã dừng trước đó
+    private void showResumeDialog() {
+        Intent i = getIntent();
+        Bundle data = i.getExtras();
+        Video v = (Video) data.getSerializable("videoData");
+        SharedPreferences preferences = getSharedPreferences("VideoPositions", MODE_PRIVATE);
+        int savedPosition = preferences.getInt(v.getTitle().replaceAll("\\s+", ""), 0);
+        if (savedPosition != 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Resume video");
+            builder.setMessage("Bạn có muốn xem tiếp phim từ vị trí bạn dừng trước đó không?");
+            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences preferences = getSharedPreferences("VideoPositions", MODE_PRIVATE);
+                    int savedPosition = preferences.getInt(v.getTitle().replaceAll("\\s+", ""), 0);
+                    videoPlayer.seekTo(savedPosition);
+                    videoPlayer.start();
+                }
+            });
+            builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do nothing or dismiss dialog
+                }
+            });
+            builder.show();
+        }
+    }
+
+
+    // sự kiện bắt vị trí đang xem khi ấn dừng video
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Intent i = getIntent();
+        Bundle data = i.getExtras();
+        Video v = (Video) data.getSerializable("videoData");
+        SharedPreferences preferences = getSharedPreferences("VideoPositions", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(v.getTitle().replaceAll("\\s+", ""), videoPlayer.getCurrentPosition());
+        editor.apply();
+    }
+
+
 }
