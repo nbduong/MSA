@@ -49,9 +49,9 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                 }
                 service.resetPassword(ForgetPasswordActivity.this, strEmail);
 
-                    Intent rsPasswordSuccess = new Intent(ForgetPasswordActivity.this, rsPasswordSuccessActivity.class);
-                    startActivity(rsPasswordSuccess);
-                    finish();
+                Intent rsPasswordSuccess = new Intent(ForgetPasswordActivity.this, rsPasswordSuccessActivity.class);
+                startActivity(rsPasswordSuccess);
+                finish();
             }
         });
     }

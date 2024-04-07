@@ -2,6 +2,7 @@ package com.example.msa;
 
 import static android.view.View.OVER_SCROLL_ALWAYS;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 
@@ -71,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
         videoList.setAdapter(adapter);
 
         getJsonData();
+
+
+        ImageView iconProfile = findViewById(R.id.imageView3);
+        iconProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profile = new Intent(MainActivity.this,ProfileActivity.class);
+                startActivity(profile);
+                finish();
+            }
+        });
+
     }
 
     private void banners() {
@@ -173,10 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue.add(objectRequest);
 
-
-
-
-
     }
+
+
 
 }
