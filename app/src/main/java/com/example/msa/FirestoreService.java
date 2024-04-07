@@ -23,6 +23,14 @@ public class FirestoreService {
         this.database = FirebaseFirestore.getInstance();
     }
 
+    public FirebaseFirestore getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(FirebaseFirestore database) {
+        this.database = database;
+    }
+
     public void addUserToFireStore(String email, String fullname, Long phonenumber){
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("full_name",fullname);

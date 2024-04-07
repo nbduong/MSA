@@ -25,7 +25,7 @@
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="230dp"
                 android:scaleType="fitXY"
                 app:srcCompat="@drawable/top_background1" />
 
@@ -78,12 +78,11 @@
                 android:id="@+id/textViewForgetPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Forget your password ?"
-                android:textColor="#EA6035"
-                android:textStyle="italic|bold"
+                android:text="Forget your password?"
+                android:textStyle="bold|italic"
+                android:textColor="#3b608c"
+                android:layout_marginLeft="32dp"
                 android:textSize="16sp"
-                android:padding="8dp"
-                android:layout_marginStart="32dp"
                 />
             <ImageView
                 android:id="@+id/loginImageView"

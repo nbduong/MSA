@@ -16,7 +16,10 @@
         android:theme="@style/Theme.MSA"
         tools:targetApi="31">
         <activity
-            android:name=".ViewVideo"
+
+            android:name=".ProfileActivity"
+
+
             android:exported="false" />
         <activity
             android:name=".rsPasswordSuccessActivity"
@@ -40,6 +43,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

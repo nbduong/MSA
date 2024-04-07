@@ -24,6 +24,9 @@ import com.google.firebase.auth.AuthResult;
 
 public class LoginActivity extends AppCompatActivity {
     FirebaseAuthService service;
+    SessionManager sessionManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,13 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        sessionManager = new SessionManager(this);
+        if (sessionManager.isLoggedIn()) {
+            Intent home = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(home);
+            finish();
+        }
+
         EditText email = findViewById(R.id.editTextEmail);
         EditText password = findViewById(R.id.editTextPassword);
         TextView signUpTextView = findViewById(R.id.signUpTextView);
@@ -78,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            sessionManager.saveLoginState();
                             Toast.makeText(LoginActivity.this,"Login successful",Toast.LENGTH_SHORT).show();
                             Intent home = new Intent(LoginActivity.this,MainActivity.class);
                             startActivity(home);
@@ -93,5 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 }
