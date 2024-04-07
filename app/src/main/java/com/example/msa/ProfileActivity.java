@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -40,10 +41,20 @@ public class ProfileActivity extends AppCompatActivity {
     private FirestoreService firestoreService;
     private SessionManager sessionManager;
     @Override
+    public void onBackPressed() {
+        if (isOpen) {
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            layout1.applyTo(constraintLayout);
+            isOpen = false;
+        } else {
+            super.onBackPressed();
+        }
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); // add this line
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_profile);
         Window w = getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -101,14 +112,14 @@ public class ProfileActivity extends AppCompatActivity {
                 if (!isOpen) {
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     layout2.applyTo(constraintLayout);
-                    isOpen = !isOpen ;
+                    isOpen = true ;
                 }
 
                 else {
 
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     layout1.applyTo(constraintLayout);
-                    isOpen = !isOpen ;
+                    isOpen = false ;
 
                 }
             }
@@ -148,5 +159,8 @@ public class ProfileActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+
+
+
     }
 }
