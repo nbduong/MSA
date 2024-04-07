@@ -50,6 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         addSampleData(db, "Eve14", 2.0f, "Terrible","Volkswagen GTI Review");
         addSampleData(db, "Eve14", 2.0f, "Terrible","We Are Going On Bullrun");
     }
+    //Tạo database với bản ghi có sẵn
     private void addSampleData(SQLiteDatabase db, String name, float rating, String review,String movie) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME, name);
@@ -58,12 +59,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_NAMEMOVIE, movie);
         db.insert(TABLE_NAME, null, contentValues);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-
+    //Thêm bản ghi vào database
     public boolean addRating(String name, float rating, String review,String movie) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -80,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
-
+    //lấy dữ liệu đánh giá
     public String getAllRatingsAsString(String a) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] selectionArgs = { a };
@@ -92,24 +94,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
             @SuppressLint("Range") float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
             @SuppressLint("Range") String review = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW));
-            @SuppressLint("Range") String movie = cursor.getString(cursor.getColumnIndex(COLUMN_NAMEMOVIE));
-            ratingText.append("Tên người dùng: ").append(name).append("\n");
-            ratingText.append("Đánh giá: ").append(rating).append("\n");
-            ratingText.append("Nhận xét: ").append(review).append("\n\n");
-            ratingText.append("Tên Phim: ").append(movie).append("\n\n\n");
+            ratingText.append("______________________________________________").append("\n");
+            ratingText.append("Name: ").append(name).append("\n");
+            ratingText.append("Rate: ").append(rating).append("\n");
+            ratingText.append("Comment: ").append(review).append("\n");
         }
         cursor.close();
         return ratingText.toString();
     }
-    public float getAverageRating() {
+    //lấy trung bình rate
+    public float getAverageRating(String movie) {
+        String[] selectionArgs = { movie };
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT AVG(" + COLUMN_RATING + ") FROM " + TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT AVG(" + COLUMN_RATING + ") FROM " + TABLE_NAME+ " WHERE " + COLUMN_NAMEMOVIE + " = ?", selectionArgs);
         float averageRating = 0;
         if (cursor.moveToFirst()) {
             averageRating = cursor.getFloat(0);
         }
         cursor.close();
         return averageRating;
+    }
+    //lấy rate count
+    public int getallusercomment(String movie){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] selectionArgs = { movie };
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME+ " WHERE " + COLUMN_NAMEMOVIE + " = ?", selectionArgs);
+        int sumuser = 0;
+        if (cursor.moveToFirst()) {
+            sumuser = cursor.getInt(0);
+        }
+        cursor.close();
+        return sumuser;
     }
 
 }
