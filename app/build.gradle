@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.example.msa"
         minSdk 26
-        targetSdk 26
+        targetSdk 28
         versionCode 1
         versionName "1.0"
 
