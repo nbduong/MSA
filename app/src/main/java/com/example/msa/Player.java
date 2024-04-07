@@ -212,7 +212,7 @@ public class Player extends AppCompatActivity {
     private void updateFullScreenButtonMargin() {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) fullScreenOp.getLayoutParams();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            params.setMargins(32, 32, 128, 32);
+            params.setMargins(32, 128, 128, 32);
         } else {
             params.setMargins(16, 16, 16, 16);
         }

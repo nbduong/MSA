@@ -138,8 +138,8 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Đăng xuất khi người dùng nhấn nút Đồng ý
-                        firebaseAuthService.getmAuth().signOut();
                         sessionManager.clearLoginState();
+                        firebaseAuthService.getmAuth().signOut();
                         startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
                         finish(); // Kết thúc Activity hiện tại
                     }

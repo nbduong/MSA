@@ -171,3 +171,4 @@
         app:layout_constraintTop_toBottomOf="@+id/photo"
         app:layout_constraintVertical_bias="0.098" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+

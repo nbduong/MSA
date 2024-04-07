@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     List<Video> all_videos;
     private ViewPager2 viewPager2;
     private Handler slideHandler = new Handler();
+    private FirebaseAuthService service;
+    private SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,18 @@ public class MainActivity extends AppCompatActivity {
         
         initView();
         banners();
-        
+        sessionManager = new SessionManager(this);
+        if(!sessionManager.isLoggedIn()){
+            Intent login = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(login);
+            finish();
+        }
+        service = new FirebaseAuthService();
+        if(service.getmAuth().getCurrentUser() == null){
+            Intent login = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(login);
+            finish();
+        }
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -85,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent profile = new Intent(MainActivity.this,ProfileActivity.class);
                 startActivity(profile);
+                finish();
             }
         });
 

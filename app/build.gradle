@@ -9,8 +9,9 @@ android {
 
     defaultConfig {
         applicationId "com.example.msa"
-        minSdk 26
-        targetSdk 28
+        minSdk 28
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 

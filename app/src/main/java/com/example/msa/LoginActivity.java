@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent forgetPassword = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
                 startActivity(forgetPassword);
-                finish();
             }
         });
 
