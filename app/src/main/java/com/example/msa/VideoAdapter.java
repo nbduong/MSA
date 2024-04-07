@@ -21,9 +21,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
 
     private final List<Video> allVideos;
     private final Context  context;
+
+
+    private  DatabaseHelper dbHelper;
     public VideoAdapter (Context ctx, List<Video> videos){
         this.allVideos = videos;
         this.context = ctx;
+
     }
 
     @NonNull
@@ -31,11 +35,18 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.video_view,parent,false);
         return new ViewHolder(v);
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        dbHelper = new DatabaseHelper(context);
+        float Rate =dbHelper.getAverageRating(allVideos.get(position).getTitle());
+        System.out.println(allVideos.get(position).getTitle());
         holder.title.setText(allVideos.get(position).getTitle());
+        holder.rate.setText(String.format("Đánh giá: %.2f", Rate));
+        System.out.println(Rate);
+//        holder.rate.setText("haha");
         String link = allVideos.get(position).getImageUrl();
         link = link.substring(0, 4) + "s" + link.substring(4);
         Picasso.get().load(link).into(holder.videoImage);
@@ -61,7 +72,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView videoImage;
-        TextView title;
+        TextView title,rate;
         View vv;
         public ViewHolder(@NonNull View itemView) {
 
@@ -69,6 +80,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
 
             videoImage = itemView.findViewById(R.id.videoThumbnail);
             title = itemView.findViewById(R.id.videoTitle);
+            rate = itemView.findViewById(R.id.Rate);
             vv = itemView;
         }
     }

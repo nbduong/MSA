@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 import androidx.activity.EdgeToEdge;
@@ -88,9 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void banners() {
         List<Slideritems> slideritems  = new ArrayList<>();
-        slideritems.add(new Slideritems(R.drawable.wide));
-        slideritems.add(new Slideritems(R.drawable.wide1));
-        slideritems.add(new Slideritems(R.drawable.wide3));
+        slideritems.add(new Slideritems(R.drawable.pic1));
+        slideritems.add(new Slideritems(R.drawable.pic2));
+        slideritems.add(new Slideritems(R.drawable.pic3));
 
         viewPager2.setAdapter(new SliderAdapters(slideritems,viewPager2));
         viewPager2.setClipToPadding(false);

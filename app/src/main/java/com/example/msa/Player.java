@@ -52,12 +52,14 @@ public class Player extends AppCompatActivity {
     private VideoView videoPlayer;
     private ImageView fullScreenOp;
 
-    private TextView rateCount,showRating;
+    private TextView rateCount,showRating,avgRating,userRate;
     private EditText review;
     private Button submit;
     private DatabaseHelper dbHelper;
+    FirebaseAuthService service;
+
     private RatingBar ratingBar;
-    float rateValue; String temp;
+    float rateValue; String temp,test;
     ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,15 +76,16 @@ public class Player extends AppCompatActivity {
         fullScreenOp = findViewById(R.id.fullScreenOp);
         progressBar = findViewById(R.id.videoProgressBar);
 
-
+        avgRating=findViewById(R.id.avgRating);
+        userRate=findViewById(R.id.userRate);
         rateCount=findViewById(R.id.rateCount);
         showRating=findViewById(R.id.showRating);
         review=findViewById(R.id.review);
         submit=findViewById(R.id.submitBtn);
         ratingBar=findViewById(R.id.ratingBar);
         dbHelper = new DatabaseHelper(this);
-
-
+        service = new FirebaseAuthService();
+//        String name=service.getmAuth().getCurrentUser().getDisplayName();
 
         //lấy dữ liệu về phim
         Intent i = getIntent();
@@ -152,35 +155,51 @@ public class Player extends AppCompatActivity {
                 } else if (rateValue <= 3 && rateValue>2) {
                     rateCount.setText("Good " + rateValue + "/5");
                 } else if (rateValue <= 4 && rateValue>3) {
-                    rateCount.setText("Very " + rateValue + "/5");
+                    rateCount.setText("Very Good" + rateValue + "/5");
                 } else { // rateValue is 5
-                    rateCount.setText("Best " + rateValue + "/5");
+                    rateCount.setText("Best Movie" + rateValue + "/5");
                 }
             }
         });
+        //đổ dữ liệu card view
+        String a=v.getTitle();
+        int b= dbHelper.getallusercomment(a);
+        userRate.setText(String.format("Vote Count:%s",b));
+        float c= dbHelper.getAverageRating(a);
+        avgRating.setText(String.format("Rate:%.1f/5", c));
+
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                test=review.getText().toString();
                 temp=rateCount.getText().toString();
-                showRating.setText("đánh giá của bạn:\n"+temp+"\n"+review.getText());
-
                 rateValue=ratingBar.getRating();
-                String name = "Your Name"; // Thay bằng tên người dùng thực tế
-                boolean result = dbHelper.addRating(name, rateValue, review.getText().toString());
+                String name=service.getmAuth().getCurrentUser().getEmail();
+                //System.out.println(name);
+                boolean result = dbHelper.addRating(name, rateValue, test,a);
+                //Toast.makeText(Player.this, test, Toast.LENGTH_SHORT).show();
                 if (result) {
-                    Toast.makeText(Player.this, "Đã gửi đánh giá", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Player.this, "success", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(Player.this, "Lỗi khi gửi đánh giá", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Player.this, "error", Toast.LENGTH_SHORT).show();
                 }
-                String ratingsText = dbHelper.getAllRatingsAsString();
+                //đổ lại dữ liệu cho bảng commnent
+                String ratingsText = dbHelper.getAllRatingsAsString(a);
                 showRating.setText(ratingsText);
+                //xóa trắng thông tin của edittext
                 review.setText("");
                 ratingBar.setRating(0);
                 rateCount.setText("");
+                //cập nhập cho cardview hiển thị số sao và ratecount
+                float c= dbHelper.getAverageRating(a);
+                avgRating.setText(String.format("Rate:%.1f/5", c));
+                int b= dbHelper.getallusercomment(a);
+                userRate.setText(String.format("Vote Count:%s",b));
             }
 
         });
-        String ratingsText = dbHelper.getAllRatingsAsString();
+        //đổ dữ liệu comment
+        String ratingsText = dbHelper.getAllRatingsAsString(a);
         showRating.setText(ratingsText);
     }
 
