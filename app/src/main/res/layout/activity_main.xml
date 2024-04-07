@@ -68,8 +68,8 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
                 android:text="Trending Movies"
-                android:textColor="@color/yellow"
-                android:textSize="18sp"
+                android:textColor="@color/orange"
+                android:textSize="32sp"
                 android:textStyle="bold" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
