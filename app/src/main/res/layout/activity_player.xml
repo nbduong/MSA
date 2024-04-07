@@ -20,24 +20,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_player">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="409dp"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <FrameLayout
                 android:id="@+id/frameLayout"
                 android:layout_width="0dp"
                 android:layout_height="230dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <VideoView
                     android:id="@+id/videoView"
@@ -55,7 +44,7 @@
                     android:id="@+id/fullScreenOp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
+                    android:layout_gravity="end"
                     android:layout_margin="16dp"
                     android:padding="5dp"
                     android:scaleX="2"

@@ -103,8 +103,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ratingText.toString();
     }
     //lấy trung bình rate
-    public float getAverageRating(String movie) {
-        String[] selectionArgs = { movie };
+    public float getAverageRating(String name) {
+        String[] selectionArgs = { name };
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT AVG(" + COLUMN_RATING + ") FROM " + TABLE_NAME+ " WHERE " + COLUMN_NAMEMOVIE + " = ?", selectionArgs);
         float averageRating = 0;
@@ -115,9 +115,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return averageRating;
     }
     //lấy rate count
-    public int getallusercomment(String movie){
+    public int getallusercomment(String name){
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] selectionArgs = { movie };
+        String[] selectionArgs = { name };
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME+ " WHERE " + COLUMN_NAMEMOVIE + " = ?", selectionArgs);
         int sumuser = 0;
         if (cursor.moveToFirst()) {
